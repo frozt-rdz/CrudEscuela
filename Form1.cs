@@ -154,6 +154,7 @@ namespace CrudEscuela
             AcceptButton = btnBuscar; // presionar Enter en la barra de busqueda equivale a pulsar Buscar
             EstiloBoton(btnBuscar, Color.FromArgb(91, 42, 134));
             EstiloBoton(btnLimpiar, Color.FromArgb(177, 74, 237));
+            EstiloBoton(btnReportes, Color.FromArgb(46, 26, 99));
             txtBuscar.Width = 250;
         }
 
@@ -224,6 +225,12 @@ namespace CrudEscuela
             txtBuscar.Clear();
             Buscar();            // con el texto vacio, quita el filtro y muestra todos los registros
             txtBuscar.Focus();
+        }
+
+        private void btnReportes_Click(object sender, EventArgs e)
+        {
+            using var f = new FormReportes();
+            f.ShowDialog();
         }
     }
 }

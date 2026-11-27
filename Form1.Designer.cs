@@ -38,6 +38,7 @@
             btnBuscar = new Button();
             btnLimpiar = new Button();
             lblResultados = new Label();
+            btnReportes = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvDatos).BeginInit();
             SuspendLayout();
             // 
@@ -116,7 +117,7 @@
             // 
             btnBuscar.Location = new Point(385, 98);
             btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(94, 29);
+            btnBuscar.Size = new Size(94, 30);
             btnBuscar.TabIndex = 8;
             btnBuscar.Text = "Buscar";
             btnBuscar.UseVisualStyleBackColor = true;
@@ -140,11 +141,22 @@
             lblResultados.Size = new Size(0, 20);
             lblResultados.TabIndex = 10;
             // 
+            // btnReportes
+            // 
+            btnReportes.Location = new Point(585, 100);
+            btnReportes.Name = "btnReportes";
+            btnReportes.Size = new Size(94, 27);
+            btnReportes.TabIndex = 11;
+            btnReportes.Text = "Reportes";
+            btnReportes.UseVisualStyleBackColor = true;
+            btnReportes.Click += btnReportes_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(882, 513);
+            Controls.Add(btnReportes);
             Controls.Add(lblResultados);
             Controls.Add(btnLimpiar);
             Controls.Add(btnBuscar);
@@ -176,5 +188,6 @@
         private Button btnBuscar;
         private Button btnLimpiar;
         private Label lblResultados;
+        private Button btnReportes;
     }
 }
