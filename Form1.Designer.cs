@@ -143,9 +143,9 @@
             // 
             // btnReportes
             // 
-            btnReportes.Location = new Point(585, 100);
+            btnReportes.Location = new Point(385, 133);
             btnReportes.Name = "btnReportes";
-            btnReportes.Size = new Size(94, 27);
+            btnReportes.Size = new Size(94, 28);
             btnReportes.TabIndex = 11;
             btnReportes.Text = "Reportes";
             btnReportes.UseVisualStyleBackColor = true;

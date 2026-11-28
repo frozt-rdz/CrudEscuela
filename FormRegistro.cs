@@ -212,7 +212,10 @@ namespace CrudEscuela
                 if (_fila == null)
                 {
                     // INSERTAR
-                    // Listas para almacenar los nombres de las columnas y los parámetros que se usarán en la consulta SQL
+                    // Si la tabla es Inscripcion, se usa el procedimiento almacenado
+                    bool usarProcedimiento = _tabla == "Inscripcion";
+
+                    // Listas para almacenar los nombres de las columnas y los parametros que se usaran en la consulta
                     var columnas = new List<string>();
                     var parametros = new List<string>();
 
@@ -222,14 +225,27 @@ namespace CrudEscuela
                         // Leemos y validamos el valor del control; si no es valido, TryLeerValor ya aviso al usuario
                         if (!TryLeerValor(par.Key, par.Value, out object valor)) return;
 
-                        // Los valores siempre van como parametros (nunca pegados al texto de la consulta) para evitar inyeccion SQL
-                        cmd.Parameters.AddWithValue("@v_" + par.Key, valor);
+                        // El procedimiento espera parametros con el mismo nombre que la columna (@IdAlumno, @IdMateria, @Calificacion)
+                        // Para el INSERT normal se usa el prefijo @v_
+                        string nombreParametro = usarProcedimiento ? "@" + par.Key : "@v_" + par.Key;
+
+                        // Los valores siempre van como parametros para evitar inyeccion SQL
+                        cmd.Parameters.AddWithValue(nombreParametro, valor);
                         columnas.Add("[" + par.Key + "]");
                         parametros.Add("@v_" + par.Key);
                     }
 
-                    // Intruccion SQL formateada para insertar los datos en la tabla correspondiente
-                    cmd.CommandText = $"INSERT INTO {_tabla} ({string.Join(", ", columnas)}) VALUES ({string.Join(", ", parametros)})";
+                    if (usarProcedimiento)
+                    {
+                        // Ejecuta sp_InscribirAlumno en lugar de un INSERT directo
+                        cmd.CommandText = "sp_InscribirAlumno";
+                        cmd.CommandType = CommandType.StoredProcedure;
+                    }
+                    else
+                    {
+                        // Intruccion SQL formateada 
+                        cmd.CommandText = $"INSERT INTO {_tabla} ({string.Join(", ", columnas)}) VALUES ({string.Join(", ", parametros)})";
+                    }
                 }
                 else
                 {
@@ -286,13 +302,15 @@ namespace CrudEscuela
             }
             catch (SqlException ex)
             {
-                // El numero de error identifica el tipo de problema
+                // El numero de error identifica el problema
                 string mensaje = ex.Number switch
                 {
                     // 547: violacion de CHECK o de llave foranea
                     547 => "El valor no cumple una regla de la base de datos (por ejemplo, un rango permitido).\n\nDetalle: " + ex.Message,
                     // 2601 y 2627: valor duplicado en un indice unico o llave primaria
                     2601 or 2627 => "Ya existe un registro con ese valor (dato duplicado).",
+                    // 50000 o mas: errores propios lanzados con THROW en el procedimiento y los triggers
+                    >= 50000 => ex.Message,
                     _ => "Error de base de datos: " + ex.Message
                 };
                 MessageBox.Show(mensaje);
